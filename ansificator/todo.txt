@@ -1,0 +1,8 @@
+
+Todo:
+    # "Increase Contrast" may have a bug, where values at 128 are not changed, because it's
+    # multiplied by the ration as a value of 0.
+
+Release:
+X   # Shouldn't say "done!" when stopping it manually
+X   # Go through warnings
