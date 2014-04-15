@@ -1,2 +1,6 @@
 ANSI-ficator
 ============
+
+
+INSTALLATION
+------------
