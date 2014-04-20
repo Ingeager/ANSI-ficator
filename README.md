@@ -55,7 +55,7 @@ External links for reading, to learn more about IBM's VGA (and other) standards:
 The files "chart.bmp" and "trees.jpg" found in /ansificator must
 be placed in the path that the program starts in. When running from Qt this seems to be in
 the base path of the active build setting. When running the binary outside Qt they must
-be in the binary's folder. "chart.bmp" is loaded on startup, "trees.jpg" is just a sample
+be in the binary's folder. "chart.bmp" is loaded on startup, "trees.png" is just a sample
 image and is not vital.
 
 ###OTHER
