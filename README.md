@@ -21,7 +21,7 @@ mode display commonly associated with the "DOS era".
 In more detail, the converter creates graphics based upon the text modes on
 VGA display devices, or devices compatible with the VGA standard. But the text mode format is also found
 on earlier IBM standards like the EGA and CGA, the EGA expanded the features of the CGA and the VGA
-expanded on the VGA, in turn.
+expanded on the EGA in turn.
 The VGA standard is still a "lowest common denominator" on graphics devices on today's computers,
 in other words, they more or less support displaying the modes of the VGA standard. Which is why you see
 "DOS"-like text upon a computer booting, which is done in VGA text mode, it's also used for example, in the
