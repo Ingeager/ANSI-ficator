@@ -46,11 +46,11 @@ colors when printing characters in "Screen 0" mode (a VGA text mode).
 
 External links for reading, to learn more about IBM's VGA (and other) standards:
 
-https://en.wikipedia.org/wiki/Video_Graphics_Array
-https://en.wikipedia.org/wiki/Enhanced_Graphics_Adapter
-https://en.wikipedia.org/wiki/Color_Graphics_Adapter
+- https://en.wikipedia.org/wiki/Video_Graphics_Array 
+- https://en.wikipedia.org/wiki/Enhanced_Graphics_Adapter 
+- https://en.wikipedia.org/wiki/Color_Graphics_Adapter
 
-#Source code notes:
+###SOURCE CODE NOTES
 
 The files "chart.bmp" and "trees.jpg" found in /ansificator must
 be placed in the path that the program starts in. When running from Qt this seems to be in
@@ -58,16 +58,16 @@ the base path of the active build setting. When running the binary outside Qt th
 be in the binary's folder. "chart.bmp" is loaded on startup, "trees.jpg" is just a sample
 image and is not vital.
 
-#Other:
+###OTHER
 
 This is my first programming project for a very long while that is meant for mainstream use,
 and the first project I wrote in Qt, that I've released.
 
 Enjoy the software!
 	
-#Contact
+###CONTACT
 
-ingegjoestoel@hotmail.com
+ingegjoestoel@hotmail.com 
 https://github.com/Ingeager
 
 ####*(to be updated with binary downloads)*
