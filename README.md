@@ -60,14 +60,14 @@ image and is not vital.
 
 ###OTHER
 
-This is my first programming project for a very long while that is meant for mainstream use,
+This is my first programming project for a long while that is meant for mainstream use,
 and the first project I wrote in Qt, that I've released.
 
 Enjoy the software!
 	
 ###CONTACT
 
-ingegjoestoel@hotmail.com 
-https://github.com/Ingeager
+- ingegjoestoel@hotmail.com 
+- https://github.com/Ingeager
 
 ####*(to be updated with binary downloads)*
