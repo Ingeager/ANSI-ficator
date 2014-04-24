@@ -2,6 +2,7 @@
 #include "Core.h"
 
 #include <fstream>
+#include <QImage>
 
 using namespace std;
 
@@ -103,59 +104,11 @@ void tBitmapc::set32(int value) {
 //***********************************************************
 
 
-ui8 *loadFile(const char *fname, int *fsizeRet)
-{
-	ui32 fsize;
-	ifstream fs;
-
-	fs.exceptions(ios::goodbit); //don't throw exceptions.
-
-	fs.open(fname, ios::binary | ios::in | ios::ate);
-	if (fs.fail() == true) {goto fail;}
-
-	fsize = fs.tellg();
-	if ((fsize == 0) || (fsize > 0x3B9ACA00) || (fs.fail() == true)) {goto fail;}
-	fs.seekg(0);
-	if (fs.fail() == true) {goto fail;}
-
-	{
-		ui8 *bin = new ui8[fsize];
-		if (!bin) {goto fail;}
-		fs.read((char*)bin, fsize);
-		if (fs.fail() == true) {goto fail;}
-		fs.close();
-
-		if (fsizeRet) {
-			*fsizeRet = fsize;
-		}
-
-		return(bin);
-	}
-
-fail:
-	if (fsizeRet) {
-		*fsizeRet = 0;
-	}
-
-	return 0;
-	
-}
-
-void unload(ui8 *buffer) {
-	if (buffer)	{delete buffer;}
-}
-
-
 tCore::tCore() {
 
-	ui8* buffer = loadFile("chart.bmp\0", 0);
-	if (buffer == 0) {return;}
+	QImage vChart;
+	vChart.load("chart.bmp", "BMP");
 	
-	tBitmapc chart;
-	
-	loadBMP_bitmapc(buffer, chart);
-	unload(buffer);
-
 	for (int chr = 0; chr < 256; chr++) {
 		int rowbase = (chr / 80);
 		int row_pixel = rowbase * 16;
@@ -164,8 +117,8 @@ tCore::tCore() {
 
 		for (int y = 0; y < 16; y++) {
 		for (int x = 0; x < 8; x++) {
-			int a = chart.get(row_pixel + y, col_pixel + x);
-			if (a) {
+
+			if (vChart.pixel(col_pixel + x, row_pixel + y) & 0xFFFFFF) {
 				letterRegistry[chr][y][x] = 1;
 			} else {
 				letterRegistry[chr][y][x] = 0;
@@ -340,101 +293,6 @@ void tCore::setupLetterTable() {
     mLetterTableSize = vLetterTableIndex;
 
 }
-
-struct BITMAPINFOHEADER {
-  ui32 biSize; 
-  si32 biWidth; 
-  si32 biHeight; 
-  si16 biPlanes; 
-  si16 biBitCount;
-  ui32 biCompression; 
-  ui32 biSizeImage; 
-  si32 biXPelsPerMeter; 
-  si32 biYPelsPerMeter; 
-  ui32 biClrUsed; 
-  ui32 biClrImportant;  
-};
-
-si32 tCore::loadBMP_bitmapc(ui8 *aBMPdata, tBitmapc &bitmap) {
-
-	if ((aBMPdata[0] != 'B') || (aBMPdata[1] != 'M')) {
-			return -1;
-	}
-
-	ui32 bitmapOffset;
-
-	bitmapOffset = *(ui32*)(aBMPdata+0xA);
-
-	BITMAPINFOHEADER bmih;
-
-	memcpy(&bmih, aBMPdata+0xE, sizeof(bmih));
-
-	if (bmih.biSize != 40) {
-		return -2;
-	}
-
-	int width, height, bpp;
-
-	width = bmih.biWidth;
-	height = bmih.biHeight;
-
-	bpp = bmih.biBitCount;
-
-	if ((bpp != 8) && (bpp != 24)) {
-		//only 8bpp and 24bpp support for now
-		return -3;
-	}
-
-	int widthBytes;
-	int a;
-
-	bitmap.alloc(height, width, 32);
-	//Com.allocBitmap(mxBuf, height, width, sn);
-
-	int *mxBufBitmap = (int*) bitmap.buffer;
-
-	ui8 *bmp_bitmap = aBMPdata+bitmapOffset;
-	int *bmp_palette = (int*) (aBMPdata + 0xE + bmih.biSize);
-
-	a = (width * (bpp/8));
-	widthBytes = a & 0xFFFFFFFC;
-	if (a & 3) {widthBytes += 4;}
-
-	switch (bpp) {
-	case 8:
-		
-		{ for (int row = 0; row < height; row++) {
-			int fromRowBase = (widthBytes * (height-1-row));
-			int toRowBase = (row * width); 
-			for (int col = 0; col < width; col++) {
-					int bm8 = bmp_bitmap[fromRowBase+col];
-					int rgb = bmp_palette[bm8];
-					mxBufBitmap[toRowBase+col] = rgb;
-			}
-
-		} }
-		break;
-
-	case 24:
-
-		{ for (int row = 0; row < height; row++) {
-			int fromRowBase = (widthBytes * (height-1-row));
-			int toRowBase = (row * width);
-			for (int col = 0; col < width; col++) {
-					int base = fromRowBase+(col*3);
-					int rgb = bmp_bitmap[base+0];
-					rgb |= (bmp_bitmap[base+1] << 8);
-					rgb |= (bmp_bitmap[base+2] << 16);
-					mxBufBitmap[toRowBase+col] = rgb;
-			}
-
-		} }
-		break;
-	} 
-
-	return 0;
-}
-
 
 
 
