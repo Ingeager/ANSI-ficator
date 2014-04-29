@@ -3,7 +3,7 @@ ANSI-ficator
 
 ###DOWNLOAD
 
-[version 1.0 (Windows 32-bit)](http://dl.bintray.com/ingeager/generic/ANSI-ficator-1.0-win32.zip)
+####[Version 1.0 (Windows 32-bit)](http://dl.bintray.com/ingeager/generic/ANSI-ficator-1.0-win32.zip)
 
 The software is portable, has no installer, can be moved and copied freely between folders, and doesn't store settings in the Windows Registry or user account folders. (Currently, it doesn't store settings in any form because  saving of settings isn't implemented.)
 
