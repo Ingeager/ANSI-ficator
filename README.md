@@ -1,6 +1,12 @@
 ANSI-ficator
 ============
 
+###DOWNLOAD
+
+[version 1.0 (Windows 32-bit)](http://dl.bintray.com/ingeager/generic/ANSI-ficator-1.0-win32.zip)
+
+The software is portable, has no installer, can be moved and copied freely between folders, and doesn't store settings in the Windows Registry or user account folders. (Currently, it doesn't store settings in any form because  saving of settings isn't implemented.)
+
 ###DESCRIPTION
 
 ANSI-ficator is a program that will convert images to ANSI graphics with colors,
@@ -58,16 +64,7 @@ the base path of the active build setting. When running the binary outside Qt th
 be in the binary's folder. "chart.bmp" is loaded on startup, "trees.png" is just a sample
 image and is not vital.
 
-###OTHER
-
-This is my first programming project for a long while that is meant for mainstream use,
-and the first project I wrote in Qt, that I've released.
-
-Enjoy the software!
-	
 ###CONTACT
 
 - ingegjoestoel@hotmail.com 
 - https://github.com/Ingeager
-
-####*(to be updated with binary downloads)*
