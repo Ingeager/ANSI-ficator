@@ -53,7 +53,7 @@ public:
 	
 	void setDetectionPaletteAlternate(bool aYesNo);
 	void setAlgBits(int aBits);
-	void setFormatBits(bool a16bgColors);
+	void setCurrentFormat(int aFormatIndex);
 	
 	void setCharacterOptions(bool aDisableAlphanum, bool aDisableSymbols);
     void setupLetterTable();
@@ -64,21 +64,30 @@ public:
 	//int doitGradually(tBitmapc &bm);
 	bool decideCell(tBitmapc &source, int y, int x, int *retLetter, int *retBGcol, int *retFGcol);
 	bool decideCell2(tBitmapc &compareBuf2, int *retLetter, int *retBGcol, int *retFGcol);
+	
+	bool decideCell_1bpp(tBitmapc &aCompareBMC2, int aInFGcol, int aInBGcol, int *apRetLetter);
+	bool decideCell_4bpp(tBitmapc &aCompareBMC2, int *apRetLetter, int *apRetBGcol, int *apRetFGcol);
 	bool compare(tBitmapc &bma, ui8 *letterBMP, int &fcolR, int &fcolG, int &fcolB, int &bcolR, int &bcolG, int &bcolB, int &arBestDifference);
 	void resetCount();
 	
     bool (*mResponseCallback)(tCoreResponseInfo*);
    
-    struct {
+    struct tConfig {
+    
         bool mAlternateDetectPal;
 
         bool mDisableAlphaNumeric;
         bool mDisableSymbols;
         
-        int mFormatBits;
+        int mCurrentFormat;
         
         int mLaziness;
+        
     } mConfig;
+
+    //used for mConfig.mCurrentFormat
+    enum eFormat {eFormat_16f16b = 0, eFormat_16f8b, eFormat_Mono_Win, eFormat_Mono_DOS};
+    
     
     int mAlgorithmBits;
 

@@ -1,7 +1,7 @@
 
 #include "Core.h"
 
-#include <fstream>
+//#include <fstream>
 #include <QImage>
 
 using namespace std;
@@ -175,7 +175,7 @@ tCore::tCore() {
 		
 	mAlgorithmBits = C_COREBIT_2X2;
 
-    mConfig.mFormatBits = C_COREBIT_16BGCOL;
+    mConfig.mCurrentFormat = eFormat_16f16b;
     
     mConfig.mLaziness = 0;
 }
@@ -200,9 +200,8 @@ void tCore::setAlgBits(int aBits) {
     mAlgorithmBits = aBits;
 }
 
-void tCore::setFormatBits(bool a16bgColors) {
-    mConfig.mFormatBits = 
-    (a16bgColors ? C_COREBIT_16BGCOL : 0);
+void tCore::setCurrentFormat(int aFormatIndex) {
+    mConfig.mCurrentFormat = aFormatIndex;
 }
 
 void tCore::setCharacterOptions(bool aDisableAlphanum, bool aDisableSymbols) {
@@ -383,8 +382,79 @@ inline bool tCore::decideCell(tBitmapc &source, int y, int x, int *retLetter, in
 	
 }
 
-
 inline bool tCore::decideCell2(tBitmapc &aCompareBMC2, int *apRetLetter, int *apRetBGcol, int *apRetFGcol) {
+
+
+    if (mConfig.mCurrentFormat == eFormat_Mono_Win) { 
+        *apRetFGcol = 0;
+        *apRetBGcol = 15;
+        return( decideCell_1bpp(aCompareBMC2, 0x000000, 0xFFFFFF, apRetLetter) );
+
+    } else if (mConfig.mCurrentFormat == eFormat_Mono_DOS) {
+        *apRetFGcol = 7;
+        *apRetBGcol = 0;
+        return( decideCell_1bpp(aCompareBMC2, 0xAAAAAA, 0x000000, apRetLetter) );
+
+    } else {
+    
+        return( decideCell_4bpp(aCompareBMC2, apRetLetter, apRetBGcol, apRetFGcol) );
+    }
+
+}
+ 
+bool tCore::decideCell_1bpp(tBitmapc &aCompareBMC2, int aInFGcol, int aInBGcol, int *apRetLetter) {
+    
+    int vBestLetter;
+    int vBestDifference;
+    
+    vBestDifference = 0x300*CELL_HEIGHT*CELL_WIDTH;
+
+	int bgcolR = (aInBGcol & 0xFF0000) >> 16;
+	int bgcolG = (aInBGcol & 0xFF00) >> 8;
+	int bgcolB = (aInBGcol & 0xFF);
+	int fgcolR = (aInFGcol & 0xFF0000) >> 16;
+	int fgcolG = (aInFGcol & 0xFF00) >> 8;
+	int fgcolB = (aInFGcol & 0xFF);
+
+    for (int vLetterTblIndex = 0; vLetterTblIndex < mLetterTableSize; vLetterTblIndex++) {
+        int vLetter = mLetterTable[vLetterTblIndex];
+    
+        if (compare(aCompareBMC2,
+            &letterRegistry[vLetter][0][0],
+            fgcolR, fgcolG, fgcolB,
+            bgcolR, bgcolG, bgcolB,
+            vBestDifference)) {
+                vBestLetter = vLetter;
+
+                if (vBestDifference <= mConfig.mLaziness) {
+                    bool vContinue;
+                    if (mResponseCallback) {
+                        mResponseInfo.mCorePointer = (void*)this;
+                        vContinue = mResponseCallback(&mResponseInfo);
+                        mResponseInfo.mNewCell = false;
+                    };
+                    *apRetLetter = vBestLetter;
+                    return vContinue;
+                }
+        }
+    }
+
+    bool vContinue;
+    if (mResponseCallback) {
+        mResponseInfo.mCorePointer = (void*)this;
+        vContinue = mResponseCallback(&mResponseInfo);
+        mResponseInfo.mNewCell = false;
+        if (vContinue == false) {
+            *apRetLetter = vBestLetter;
+            return false;
+        };
+    };
+    
+    *apRetLetter = vBestLetter;
+    return true;
+}
+
+bool tCore::decideCell_4bpp(tBitmapc &aCompareBMC2, int *apRetLetter, int *apRetBGcol, int *apRetFGcol) {
 
 	//for this spot in the image, check for similarity to each
 	//combination of character, bg color and front color.
@@ -411,7 +481,7 @@ inline bool tCore::decideCell2(tBitmapc &aCompareBMC2, int *apRetLetter, int *ap
 	int bgcolR, bgcolG, bgcolB;
 	int fgcolR, fgcolG, fgcolB;
 
-    int vBgColors = (mConfig.mFormatBits & C_COREBIT_16BGCOL) ? 16 : 8;
+    int vBgColors = (mConfig.mCurrentFormat == eFormat_16f16b) ? 16 : 8;
     
 	for (int bgcol = 0; bgcol < vBgColors; bgcol++) {
         bgcolB = mColCompareReg_Blue[bgcol];

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ANSI-ficator</string>
+   <string>ANSI-ficator v1.0 (dev)</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
@@ -247,6 +247,8 @@
     </property>
     <addaction name="action80_x_25_16_16_color"/>
     <addaction name="action80_x_25_16_8_color"/>
+    <addaction name="separator"/>
+    <addaction name="action80_x_25_black_text_white_bg"/>
    </widget>
    <widget class="QMenu" name="menuEngine">
     <property name="title">
@@ -410,6 +412,14 @@
   <action name="actionExitt">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="action80_x_25_black_text_white_bg">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>80 x 25 - (Black text / White bg)</string>
    </property>
   </action>
  </widget>

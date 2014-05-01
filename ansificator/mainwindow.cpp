@@ -372,9 +372,9 @@ void MainWindow::on_wConvertButton_clicked()
             ui->actionDisable_Sym->isChecked()
         );
         
-        Core.setFormatBits(
+        /*Core.setCurrentFormat(
             ui->action80_x_25_16_16_color->isChecked()
-        );
+        );*/
 		
 		mqWorkImage = mqSrcImage;
 		renderWorkQImage();
@@ -733,21 +733,29 @@ void MainWindow::on_actionDisable_Sym_triggered(bool aChecked)
 
 void MainWindow::reflectFormatBitsMenu() {
     ui->action80_x_25_16_16_color->setChecked(
-        (Core.mConfig.mFormatBits & C_COREBIT_16BGCOL) ? true : false);
+        (Core.mConfig.mCurrentFormat == tCore::eFormat_16f16b) ? true : false);
     ui->action80_x_25_16_8_color->setChecked(
-        (Core.mConfig.mFormatBits & C_COREBIT_16BGCOL) ? false : true);
+        (Core.mConfig.mCurrentFormat == tCore::eFormat_16f8b) ? true : false);
+    ui->action80_x_25_black_text_white_bg->setChecked(
+        (Core.mConfig.mCurrentFormat == tCore::eFormat_Mono_Win) ? true : false);
 }
 
 void MainWindow::on_action80_x_25_16_16_color_triggered()
 {
-    Core.setFormatBits(true);
+    Core.setCurrentFormat( tCore::eFormat_16f16b );
     reflectFormatBitsMenu();
 }
 
 void MainWindow::on_action80_x_25_16_8_color_triggered()
 {
-    Core.setFormatBits(false);
+    Core.setCurrentFormat( tCore::eFormat_16f8b );
     reflectFormatBitsMenu();   
+}
+
+void MainWindow::on_action80_x_25_black_text_white_bg_triggered()
+{
+    Core.setCurrentFormat(tCore::eFormat_Mono_Win);
+    reflectFormatBitsMenu();
 }
 
 //todo: remove
@@ -758,3 +766,4 @@ void MainWindow::on_actionExitt_triggered()
     mStopFlag = true;
     close();
 }
+
