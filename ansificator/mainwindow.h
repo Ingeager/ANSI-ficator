@@ -95,6 +95,9 @@ private slots:
     void on_action80_x_25_16_8_color_triggered();
     void on_actionExitt_triggered();
     void on_action80_x_25_black_text_white_bg_triggered();
+    void on_action80_x_25_Grey_text_Black_bg_triggered();
+    void on_wSaveTXT_clicked();
+    void on_wSaveUTF8_clicked();
 };
 
 struct tInterthread{

@@ -5,6 +5,8 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QTextCodec>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -653,6 +655,108 @@ void MainWindow::on_wDumpGFX_File_clicked()
             );  */   
 }
 
+void MainWindow::on_wSaveTXT_clicked()
+{
+
+    QString vFileName = QFileDialog::getSaveFileName(
+        this,
+        "Save as Text file..",
+        QString(),
+        "Text files (*.txt);;All files (*.*)",
+        0,
+        0);
+    if (vFileName.size() < 1) {
+        return;
+    }
+    
+    QFile wFile;
+    wFile.setFileName(vFileName);
+    
+    if (!wFile.open(QIODevice::WriteOnly)) {
+        QMessageBox::information(this,
+            "ANSI-ficator",
+            "The file couldn't be created.",
+            QMessageBox::Ok);
+    
+        return;
+    };
+    
+    QDataStream wStream;
+    wStream.setDevice(&wFile);
+
+    for (int vY = 0; vY < SCREEN_HEIGHT; vY++) {
+        for (int vX = 0; vX < SCREEN_WIDTH; vX++) {
+
+            ui8 vCharacterIndex = Core.cellmatrix[vY][vX].letter;
+            if ((vCharacterIndex >= 0) &&
+                (vCharacterIndex < 32))
+                    {vCharacterIndex = ' ';}
+            wStream << vCharacterIndex ;
+        }
+        if (vY < (SCREEN_HEIGHT-1)) {
+            wStream << ui8('\r');
+            wStream << ui8('\n');
+        }
+    }
+    
+    wFile.close();
+    
+}
+
+void MainWindow::on_wSaveUTF8_clicked()
+{
+    QString vFileName = QFileDialog::getSaveFileName(
+        this,
+        "Save as UTF-8 -encoded text..",
+        QString(),
+        "Text files (*.txt);;All files (*.*)",
+        0,
+        0);
+    if (vFileName.size() < 1) {
+        return;
+    }
+    
+    QFile wFile;
+    wFile.setFileName(vFileName);
+    
+    if (!wFile.open(QIODevice::WriteOnly)) {
+        QMessageBox::information(this,
+            "ANSI-ficator",
+            "The file couldn't be created.",
+            QMessageBox::Ok);
+    
+        return;
+    };
+    
+    QTextStream wStream;    
+    wStream.setDevice(&wFile);
+    wStream.setCodec("UTF-8");
+    
+    QTextCodec *vCodecer = QTextCodec::codecForName("IBM 850");
+    
+    QChar vCharOut;
+    for (int vY = 0; vY < SCREEN_HEIGHT; vY++) {
+        for (int vX = 0; vX < SCREEN_WIDTH; vX++) {
+            
+            QString vString = vCodecer->toUnicode(
+                (char*)&Core.cellmatrix[vY][vX].letter,
+                1,
+                0);
+            vCharOut = vString.at(0);
+
+            wStream << vCharOut;
+        }
+        if (vY < (SCREEN_HEIGHT-1)) {
+            wStream << '\r';
+            wStream << '\n';
+        }
+    }
+    
+    wFile.close();
+
+}
+
+
 void MainWindow::on_wDumpImage_clicked()
 {
     /*QFileDialog vFileDialog;
@@ -668,6 +772,11 @@ void MainWindow::on_wDumpImage_clicked()
         mDlgSaveImgFilter,
         0,
         0);
+    
+    //fix from V1
+    if (vFileName.size() < 1) {
+        return;
+    }
     
     mqWorkImage.save(vFileName, 0, -1);
     
@@ -738,6 +847,8 @@ void MainWindow::reflectFormatBitsMenu() {
         (Core.mConfig.mCurrentFormat == tCore::eFormat_16f8b) ? true : false);
     ui->action80_x_25_black_text_white_bg->setChecked(
         (Core.mConfig.mCurrentFormat == tCore::eFormat_Mono_Win) ? true : false);
+    ui->action80_x_25_Grey_text_Black_bg->setChecked(
+        (Core.mConfig.mCurrentFormat == tCore::eFormat_Mono_DOS) ? true : false);
 }
 
 void MainWindow::on_action80_x_25_16_16_color_triggered()
@@ -758,6 +869,12 @@ void MainWindow::on_action80_x_25_black_text_white_bg_triggered()
     reflectFormatBitsMenu();
 }
 
+void MainWindow::on_action80_x_25_Grey_text_Black_bg_triggered()
+{
+    Core.setCurrentFormat(tCore::eFormat_Mono_DOS);
+    reflectFormatBitsMenu();
+}
+
 //todo: remove
 void MainWindow::on_action80_x_25_triggered() { }
 
@@ -766,4 +883,8 @@ void MainWindow::on_actionExitt_triggered()
     mStopFlag = true;
     close();
 }
+
+
+
+
 
